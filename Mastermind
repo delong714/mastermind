@@ -1,0 +1,92 @@
+using System;
+ 
+public class Mastermind {
+    
+    public static bool validEntry = false;
+    public static string playerEntry = "";
+    public static int guessesRemaining = 10;
+    public static int guessMe;
+    public static string playerInput;
+    public static bool aWinnerIsYou = false;
+    public static string eval;
+    
+    static public void Main () {
+        Console.WriteLine ("Welcome to Mastermind! Please enter a 4-digit integer.");
+        // Generate MasterMind value...
+        System.Random rand = new System.Random();
+        int d1 = rand.Next(1, 6); int d2 = rand.Next(1, 6);
+        int d3 = rand.Next(1, 6); int d4 = rand.Next(1, 6);
+
+        string s = String.Join("", d1, d2, d3, d4);
+        guessMe = int.Parse(s);
+        
+        Console.WriteLine("MasterMind value = " + guessMe);
+        
+        while(guessesRemaining >0) {
+            // Play game...
+            validateForInt();
+            evaluateGuess(); 
+            guessesRemaining--;
+            // Reset for validity check...
+            validEntry = false;
+            if(eval == "++++") {
+                Console.WriteLine("Congratulations! You guessed the number and won!");
+            }
+            
+        }
+        
+        if(guessesRemaining <= 0) {
+            Console.WriteLine("Sorry, you are out of guesses. Thanks for playing.");
+        }
+        
+    }
+    
+    public static void validateForInt() {
+            // Get valid player entry...
+            while(!validEntry) {
+            playerInput = Console.ReadLine();
+            bool isInt;
+            int myInt;
+            isInt = int.TryParse(playerInput, out myInt);
+            if(isInt && playerInput.Length == 4) {
+                validEntry = true;
+                playerEntry = playerInput;
+            }
+            else {
+                Console.WriteLine("Invalid entry: Please enter a 4-digit integer");
+                // break;
+            }
+                
+            }
+    }
+    
+    public static void evaluateGuess () {
+        // Get player digits...
+        string p1 = playerEntry.Substring(0,1); string p2 = playerEntry.Substring(1,1);
+        string p3 = playerEntry.Substring(2,1); string p4 = playerEntry.Substring(3,1);
+        
+        // Get MasterMind digits...
+        string masterString = guessMe.ToString();
+        string m1 = masterString.Substring(0,1); string m2 = masterString.Substring(1,1);
+        string m3 = masterString.Substring(2,1); string m4 = masterString.Substring(3,1);
+        
+        // Create placeholders
+        string one = ""; string two = ""; string three = ""; string four = "";
+        
+        // Assign minus values first
+        if(masterString.Contains(p1)) {one = "-";} if(masterString.Contains(p2)) {two = "-";}
+        if(masterString.Contains(p3)) {three = "-";} if(masterString.Contains(p4)) {four = "-";}
+        
+        // Then assign plus values
+        if(p1==m1) {one = "+";}
+        if(p2==m2) {two = "+";}
+        if(p3==m3) {three = "+";}
+        if(p4==m4) {four = "+";}
+        
+        eval = String.Join("", one, two, three, four);
+        
+        if(eval != "++++") {
+            Console.WriteLine("Evaluation = " + eval + ". Guesses remaining = " + guessesRemaining);
+        }
+    }
+}
